@@ -57,7 +57,7 @@ The `.aria/` directory is meant to be committed to your repo so the whole team b
 
 ```bash
 # 1. Add the marketplace
-claude plugins marketplace add github:TMAkira/aria-plugin
+claude plugins marketplace add TMAkira/aria-plugin
 
 # 2. Install the plugin
 claude plugins install aria
