@@ -1,0 +1,12 @@
+[
+  {"query": "merge PR 425 and clean up the worktree", "should_trigger": true},
+  {"query": "la PR #380 est approved, tu peux la merger et nettoyer la branche locale?", "should_trigger": true},
+  {"query": "complete pull request 612 on ADO and delete the feature branch", "should_trigger": true},
+  {"query": "the PR is done, do the whole merge and cleanup dance for PR 99", "should_trigger": true},
+  {"query": "I want to merge my feature/auth-refactor branch into develop locally", "should_trigger": false},
+  {"query": "create a PR from my current branch to develop", "should_trigger": false},
+  {"query": "resolve the merge conflicts in my branch before pushing", "should_trigger": false},
+  {"query": "cherry-pick commit abc123 into the release branch", "should_trigger": false},
+  {"query": "rebase my feature branch onto the latest develop", "should_trigger": false},
+  {"query": "ship version 2.1.0 to production", "should_trigger": false}
+]

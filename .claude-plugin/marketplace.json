@@ -10,6 +10,12 @@
       "description": "Human-in-the-loop development workflow: design, plan, execute stepwise with checkpoints, regression baselines, code review, and post-implementation cleanup",
       "source": "./plugins/aria",
       "category": "development"
+    },
+    {
+      "name": "aria-ops",
+      "description": "Release operations toolkit: commit+push, changelog generation, QA test plans, PR merge+cleanup, and full release workflow with version bump and tagging",
+      "source": "./plugins/aria-ops",
+      "category": "operations"
     }
   ]
 }

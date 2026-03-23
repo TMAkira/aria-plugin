@@ -1,0 +1,12 @@
+[
+  {"query": "on est prets a releaser, fais un bump patch et pousse le tag", "should_trigger": true},
+  {"query": "cut a minor release, we've got enough new features for 2.4.0", "should_trigger": true},
+  {"query": "ship version 3.0.0 to production with the full release workflow", "should_trigger": true},
+  {"query": "time to tag a new version and deploy, bump the version and create the PR to master", "should_trigger": true},
+  {"query": "release", "should_trigger": true},
+  {"query": "generate the changelog for v1.9.0 based on the git history", "should_trigger": false},
+  {"query": "merge PR 425 and clean up the branch", "should_trigger": false},
+  {"query": "deploy the current build to the staging environment", "should_trigger": false},
+  {"query": "update the version number in package.json to 2.0.0", "should_trigger": false},
+  {"query": "create a git tag v1.5.0 on the current commit", "should_trigger": false}
+]

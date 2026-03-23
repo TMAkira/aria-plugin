@@ -1,0 +1,12 @@
+[
+  {"query": "generate the changelog for our latest release, we just tagged v2.3.0", "should_trigger": true},
+  {"query": "on a jamais fait de changelog pour les anciennes versions, faut rattraper tout ca d'un coup", "should_trigger": true},
+  {"query": "I need to document what changed between v1.8.0 and v1.9.0 for both developers and end users", "should_trigger": true},
+  {"query": "what's new in this version? can you write up the release notes?", "should_trigger": true},
+  {"query": "we need to backfill changelogs for versions v1.2.0 through v1.5.0 that we missed", "should_trigger": true},
+  {"query": "can you look at the git log and tell me what the team worked on last week?", "should_trigger": false},
+  {"query": "update the README with the new API endpoints we added", "should_trigger": false},
+  {"query": "I want to tag version 2.0.0 and deploy to production", "should_trigger": false},
+  {"query": "compare the diff between develop and master to see what will ship", "should_trigger": false},
+  {"query": "write a blog post about the new features in our latest update", "should_trigger": false}
+]

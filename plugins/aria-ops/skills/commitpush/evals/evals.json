@@ -1,0 +1,12 @@
+[
+  {"query": "ok j'ai fini mes modifs sur le service utilisateur et les tests passent, commit et push stp", "should_trigger": true},
+  {"query": "commitpush fix: correct null ref in OrderService", "should_trigger": true},
+  {"query": "push my changes to origin, everything's ready", "should_trigger": true},
+  {"query": "I need to save all my work and send it to the remote repository before I leave for the day", "should_trigger": true},
+  {"query": "can you stage everything, write a good commit message and push to the feature branch?", "should_trigger": true},
+  {"query": "I want to see what files have changed since my last commit", "should_trigger": false},
+  {"query": "can you amend my last commit with these new changes?", "should_trigger": false},
+  {"query": "undo my last push, I sent the wrong thing to origin", "should_trigger": false},
+  {"query": "create a new branch called feature/auth-refactor from develop", "should_trigger": false},
+  {"query": "squash my last 3 commits into one before pushing", "should_trigger": false}
+]

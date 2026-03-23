@@ -1,0 +1,12 @@
+[
+  {"query": "on va bientot releaser, faut que je sache quoi tester manuellement avant de pousser en prod", "should_trigger": true},
+  {"query": "generate a QA checklist based on what changed since v1.12.0", "should_trigger": true},
+  {"query": "what manual tests should we run? there's been a lot of changes on the auth module", "should_trigger": true},
+  {"query": "mark the current version as tested, QA is done", "should_trigger": true},
+  {"query": "I need a structured test plan for the sprint review, organized by feature area with specific test steps", "should_trigger": true},
+  {"query": "run the unit tests and tell me if anything fails", "should_trigger": false},
+  {"query": "write integration tests for the new PaymentService class", "should_trigger": false},
+  {"query": "audit the test coverage on my current branch and fix any gaps", "should_trigger": false},
+  {"query": "check if there are any regressions in the latest build", "should_trigger": false},
+  {"query": "set up cypress E2E tests for the login flow", "should_trigger": false}
+]
