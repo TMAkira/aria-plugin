@@ -1,0 +1,15 @@
+{
+  "name": "aria-marketplace",
+  "description": "Marketplace for the Aria plugin — a human-in-the-loop development workflow for Claude Code",
+  "owner": {
+    "name": "akira-sarl"
+  },
+  "plugins": [
+    {
+      "name": "aria",
+      "description": "Human-in-the-loop development workflow: design, plan, execute stepwise with checkpoints, regression baselines, code review, and post-implementation cleanup",
+      "source": "./plugins/aria",
+      "category": "development"
+    }
+  ]
+}

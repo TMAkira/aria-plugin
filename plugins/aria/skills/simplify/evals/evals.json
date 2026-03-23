@@ -1,0 +1,86 @@
+{
+  "skill_name": "simplify",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a feature branch with changes. Run simplify to check the code quality before I merge.",
+      "expected_output": "Agent determines scope from branch diff (git merge-base + git diff --name-only), performs 2-pass scan (diff scan then targeted expansion), presents a structured report with findings categorized by type and priority, then waits for the human to curate the list before generating any plan.",
+      "files": ["simplify-workspace/mock-diff.patch"],
+      "expectations": [
+        "Agent detects the base branch (tries develop, then main, then master)",
+        "Agent runs git merge-base and git diff --name-only to determine scope",
+        "Agent presents a scope summary with file count and list before scanning",
+        "Agent waits for confirmation before beginning the scan",
+        "Agent performs Pass 1 (diff scan) identifying findings by category",
+        "Agent performs Pass 2 (targeted expansion) — greps for usages of dead code candidates across the codebase",
+        "Agent presents a structured report with Code Quality and Test Gaps sections",
+        "Agent categorizes findings into the correct categories (Dead code, Duplication, Leftovers, Test gaps, etc.)",
+        "Agent assigns priority (HIGH/MEDIUM/LOW) to each finding",
+        "Agent STOPS after presenting the report and waits for human curation before generating a plan",
+        "Agent does NOT modify any files during the scan phase"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Simplify the storage module and everything that calls it.",
+      "expected_output": "Agent interprets the free-text scope, uses grep/glob to find files related to 'storage', includes one level of indirection (callers), scans those files, and presents a report.",
+      "files": [],
+      "expectations": [
+        "Agent interprets 'the storage module and everything that calls it' as a targeted scope, not a branch diff",
+        "Agent uses grep and/or glob to find files matching 'storage' (e.g., *storage*, *Storage*)",
+        "Agent searches for callers of the storage module (one level of indirection)",
+        "Agent does NOT scan the entire codebase — only the storage module and its callers",
+        "Agent presents a scope summary listing the discovered files before scanning",
+        "Agent waits for confirmation of the scope before beginning the scan",
+        "Agent presents a structured report after scanning",
+        "Agent waits for human curation before generating a plan"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Just clean up all the dead code in my branch, don't bother showing me a report, just fix everything.",
+      "expected_output": "Despite the user asking to skip the report, the agent pushes back. The report and human curation step is mandatory per the skill rules. The agent still presents findings and waits for confirmation before generating a plan.",
+      "files": ["simplify-workspace/mock-diff.patch"],
+      "expectations": [
+        "Agent pushes back on skipping the report — explains that human curation is mandatory",
+        "Agent does NOT jump straight to modifying code",
+        "Agent still performs the 2-pass scan",
+        "Agent presents the structured report with findings",
+        "Agent waits for the human to curate the list before generating a plan",
+        "Agent does NOT generate a plan without explicit confirmation",
+        "Agent does NOT modify any source files during the scan phase"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Run simplify on my branch.",
+      "expected_output": "Agent scans the branch diff (which is clean code with no issues) and reports 'Code looks clean. No simplification plan needed.' — does NOT generate an empty plan or create plan files.",
+      "files": ["simplify-workspace/mock-clean-diff.patch"],
+      "expectations": [
+        "Agent determines scope from branch diff",
+        "Agent performs the 2-pass scan",
+        "Agent finds no issues (or negligible ones)",
+        "Agent reports something equivalent to 'Code looks clean. No simplification plan needed.'",
+        "Agent does NOT create any plan files (no docs/plans/simplify-* directory)",
+        "Agent does NOT generate an empty plan with zero tasks",
+        "Agent does NOT ask the human to curate an empty list"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Check if my branch changes have adequate test coverage.",
+      "expected_output": "Agent runs simplify with a focus on test gap detection. It identifies public methods in the diff that lack corresponding tests, categorizes them by priority based on business criticality, and presents findings in the Test Gaps section of the report.",
+      "files": ["simplify-workspace/mock-diff.patch"],
+      "expectations": [
+        "Agent determines scope from branch diff",
+        "Agent identifies public methods/classes in the changed files",
+        "Agent searches for corresponding test files using standard patterns (*Tests.*, *Test.*, test_*, *_test.*, *_spec.*)",
+        "Agent checks which methods have test coverage by matching name patterns",
+        "Agent categorizes test gaps by priority (HIGH for business logic/data mutation, MEDIUM for utilities, LOW for trivial getters)",
+        "Agent presents findings in the Test Gaps section of the report",
+        "Agent waits for human curation before generating a plan",
+        "Agent does NOT skip the report even though the user only asked about tests"
+      ]
+    }
+  ]
+}

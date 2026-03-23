@@ -1,0 +1,43 @@
+{
+  "skill_name": "learn",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Let's capture what we learned from this session.",
+      "expected_output": "Agent reads recent git log to gather session context, proposes learnings one at a time waiting for approval on each, appends accepted entries to learnings.md (does not overwrite), and commits the result.",
+      "files": [],
+      "expectations": [
+        "Agent reads recent git log to understand what happened in the session",
+        "Agent proposes learnings one at a time, not all at once",
+        "Agent waits for user approval on each proposed learning",
+        "Agent appends entries to learnings.md — does NOT overwrite existing content",
+        "Agent commits the updated learnings.md to git"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Capture learnings from this session.",
+      "expected_output": "Agent detects that .aria/ directory does not exist, tells the user to run aria:setup first, and STOPS without creating .aria/ or learnings.md.",
+      "files": [],
+      "expectations": [
+        "Agent checks for .aria/learnings.md and detects it is missing",
+        "Agent tells the user to run aria:setup first",
+        "Agent STOPS — does NOT proceed with capturing learnings",
+        "Agent does NOT create .aria/ directory",
+        "Agent does NOT create learnings.md"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Let's capture learnings.",
+      "expected_output": "Agent reads existing learnings.md before proposing new entries, detects that some topics are already captured, skips duplicates, and only proposes genuinely new insights.",
+      "files": [],
+      "expectations": [
+        "Agent reads existing learnings.md content before proposing anything",
+        "Agent does NOT propose a learning that duplicates a topic already in learnings.md",
+        "Agent skips or filters out already-captured topics",
+        "Agent proposes only new, non-duplicate insights"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "aria",
+  "description": "Human-in-the-loop development workflow: design, plan, execute stepwise with checkpoints, regression baselines, and code review",
+  "version": "1.1.0",
+  "author": {
+    "name": "akira-sarl"
+  },
+  "license": "MIT",
+  "keywords": ["workflow", "hitl", "execution", "design", "planning", "tdd", "regression", "code-review"]
+}

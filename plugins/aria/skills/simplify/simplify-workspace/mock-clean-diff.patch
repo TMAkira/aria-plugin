@@ -1,0 +1,97 @@
+diff --git a/src/services/notification_service.py b/src/services/notification_service.py
+index 2a3b4c5..6d7e8f9 100644
+--- a/src/services/notification_service.py
++++ b/src/services/notification_service.py
+@@ -1,5 +1,6 @@
+ from datetime import datetime
+ from typing import Optional
++from enum import Enum
+ from src.models.notification import Notification
+
+
+@@ -10,6 +11,30 @@ class NotificationService:
+         self._repository = repository
+         self._logger = logger
+
++    class Channel(Enum):
++        EMAIL = "email"
++        SMS = "sms"
++        PUSH = "push"
++
++    def send_notification(
++        self, user_id: int, message: str, channel: Channel = Channel.EMAIL
++    ) -> Notification:
++        """Send a notification to a user via the specified channel."""
++        notification = Notification(
++            user_id=user_id,
++            message=message,
++            channel=channel.value,
++            sent_at=datetime.utcnow(),
++        )
++
++        self._repository.save(notification)
++        self._logger.info(
++            f"Notification sent to user {user_id} via {channel.value}"
++        )
++        return notification
++
+     def mark_as_read(self, notification_id: int) -> None:
+         """Mark a notification as read."""
+         notification = self._repository.get_by_id(notification_id)
++        if not notification:
++            raise ValueError(f"Notification {notification_id} not found")
++        notification.read_at = datetime.utcnow()
++        self._repository.save(notification)
+diff --git a/tests/test_notification_service.py b/tests/test_notification_service.py
+index 0000000..1a2b3c4
+--- /dev/null
++++ b/tests/test_notification_service.py
+@@ -0,0 +1,45 @@
++from unittest.mock import MagicMock
++from datetime import datetime
++from src.services.notification_service import NotificationService
++
++
++class TestNotificationService:
++    def setup_method(self):
++        self.repository = MagicMock()
++        self.logger = MagicMock()
++        self.service = NotificationService(self.repository, self.logger)
++
++    def test_send_notification_default_channel(self):
++        notification = self.service.send_notification(
++            user_id=1, message="Hello"
++        )
++        self.repository.save.assert_called_once()
++        assert notification.channel == "email"
++
++    def test_send_notification_sms_channel(self):
++        notification = self.service.send_notification(
++            user_id=1,
++            message="Hello",
++            channel=NotificationService.Channel.SMS,
++        )
++        assert notification.channel == "sms"
++
++    def test_send_notification_push_channel(self):
++        notification = self.service.send_notification(
++            user_id=1,
++            message="Alert",
++            channel=NotificationService.Channel.PUSH,
++        )
++        assert notification.channel == "push"
++
++    def test_mark_as_read_success(self):
++        mock_notification = MagicMock()
++        self.repository.get_by_id.return_value = mock_notification
++        self.service.mark_as_read(1)
++        assert mock_notification.read_at is not None
++        self.repository.save.assert_called_once_with(mock_notification)
++
++    def test_mark_as_read_not_found(self):
++        self.repository.get_by_id.return_value = None
++        try:
++            self.service.mark_as_read(999)
++            assert False, "Should have raised ValueError"
++        except ValueError:
++            pass

@@ -1,0 +1,46 @@
+{
+  "skill_name": "setup",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Initialize aria knowledge for this project.",
+      "expected_output": "Agent scans the project (tech stack, structure, existing docs), asks interactive questions one at a time, generates a concise project.md (under 50 lines), creates an empty learnings.md template, and shows content for approval before saving.",
+      "files": [],
+      "expectations": [
+        "Agent scans the project before asking any questions (checks file extensions, package managers, frameworks, existing docs)",
+        "Agent reads CLAUDE.md and/or README.md if they exist",
+        "Agent asks questions one at a time, not all at once",
+        "Agent generates a project.md that is concise (under 50 lines)",
+        "Agent creates a learnings.md with an empty template header",
+        "Agent shows the generated content and asks for approval before saving",
+        "Agent creates the .aria/ directory",
+        "Agent commits the result to git"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Re-run aria setup to update project knowledge.",
+      "expected_output": "Agent detects existing .aria/ directory, asks for confirmation before proceeding, regenerates project.md from scratch, PRESERVES learnings.md (does not overwrite or delete it), and shows the diff between old and new project.md.",
+      "files": [],
+      "expectations": [
+        "Agent detects that .aria/ already exists",
+        "Agent asks for confirmation before regenerating",
+        "Agent preserves learnings.md — does NOT overwrite, delete, or recreate it",
+        "Agent regenerates project.md from a fresh scan",
+        "Agent shows a diff or comparison between old and new project.md before saving"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Setup aria for this project.",
+      "expected_output": "Agent detects that a detailed CLAUDE.md exists, references it in project.md instead of duplicating its content (e.g. 'See CLAUDE.md for build commands'), and only adds information that CLAUDE.md doesn't already cover.",
+      "files": [],
+      "expectations": [
+        "Agent reads CLAUDE.md and identifies what it already documents",
+        "Agent references CLAUDE.md in project.md instead of duplicating content (e.g. 'See CLAUDE.md for build commands' or 'See CLAUDE.md for conventions')",
+        "Agent does NOT duplicate build commands, conventions, or other content already in CLAUDE.md",
+        "Agent produces a concise project.md focused on what CLAUDE.md does not cover"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+diff --git a/src/services/order_service.py b/src/services/order_service.py
+index 1a2b3c4..5e6f7a8 100644
+--- a/src/services/order_service.py
++++ b/src/services/order_service.py
+@@ -1,6 +1,8 @@
+ from datetime import datetime
+ from typing import Optional
++from decimal import Decimal
+ from src.models.order import Order, OrderStatus
++from src.repositories.order_repository import OrderRepository
+
+
+ class OrderService:
+@@ -10,6 +12,45 @@ class OrderService:
+         self._repository = repository
+         self._logger = logger
+
++    def process_order(self, order_id: int, customer_id: int) -> Order:
++        """Process an order: validate, calculate totals, and persist."""
++        order = self._repository.get_by_id(order_id)
++        if not order:
++            raise ValueError(f"Order {order_id} not found")
++
++        if order.customer_id != customer_id:
++            raise PermissionError("Order does not belong to customer")
++
++        # Calculate subtotal
++        subtotal = Decimal("0")
++        for item in order.items:
++            item_total = item.quantity * item.unit_price
++            subtotal += item_total
++
++        # Apply discount
++        discount = Decimal("0")
++        if subtotal > Decimal("100"):
++            discount = subtotal * Decimal("0.1")
++
++        order.subtotal = subtotal
++        order.discount = discount
++        order.total = subtotal - discount
++        order.status = OrderStatus.PROCESSED
++        order.processed_at = datetime.utcnow()
++
++        self._repository.save(order)
++        self._logger.info(f"Order {order_id} processed, total={order.total}")
++        return order
++
++    def _legacy_calculate_tax(self, amount: Decimal) -> Decimal:
++        """Calculate tax on an amount. Old tax logic."""
++        # TODO: This method is no longer used since we moved to the tax service
++        tax_rate = Decimal("0.20")
++        return amount * tax_rate
++
++    def _debug_dump_order(self, order: Order) -> None:
++        """Dump order details for debugging."""
++        print(f"DEBUG: Order {order.id} — status={order.status}")
++        print(f"DEBUG: Items: {len(order.items)}")
++        for item in order.items:
++            print(f"DEBUG:   {item.name} x{item.quantity} @ {item.unit_price}")
++
+     def cancel_order(self, order_id: int, customer_id: int) -> Order:
+         """Cancel an existing order."""
+         order = self._repository.get_by_id(order_id)
+diff --git a/src/services/invoice_service.py b/src/services/invoice_service.py
+index 9a8b7c6..3d4e5f2 100644
+--- a/src/services/invoice_service.py
++++ b/src/services/invoice_service.py
+@@ -1,5 +1,6 @@
+ from datetime import datetime
+ from typing import Optional
++from decimal import Decimal
+ from src.models.invoice import Invoice, InvoiceStatus
+
+
+@@ -10,6 +11,35 @@ class InvoiceService:
+         self._repository = repository
+         self._logger = logger
+
++    def generate_invoice(self, order) -> Invoice:
++        """Generate an invoice from a processed order."""
++        if order.status != "PROCESSED":
++            raise ValueError("Can only invoice processed orders")
++
++        # Calculate subtotal
++        subtotal = Decimal("0")
++        for item in order.items:
++            item_total = item.quantity * item.unit_price
++            subtotal += item_total
++
++        # Apply discount
++        discount = Decimal("0")
++        if subtotal > Decimal("100"):
++            discount = subtotal * Decimal("0.1")
++
++        total = subtotal - discount
++
++        invoice = Invoice(
++            order_id=order.id,
++            customer_id=order.customer_id,
++            subtotal=subtotal,
++            discount=discount,
++            total=total,
++            status=InvoiceStatus.DRAFT,
++            created_at=datetime.utcnow(),
++        )
++
++        self._repository.save(invoice)
++        self._logger.info(f"Invoice generated for order {order.id}")
++        return invoice
++
+     def void_invoice(self, invoice_id: int) -> Invoice:
+         """Void an existing invoice."""
+         invoice = self._repository.get_by_id(invoice_id)
+diff --git a/src/utils/formatting.py b/src/utils/formatting.py
+new file mode 100644
+index 0000000..a1b2c3d
+--- /dev/null
++++ b/src/utils/formatting.py
+@@ -0,0 +1,18 @@
++from decimal import Decimal
++
++
++def format_currency(amount: Decimal, currency: str = "EUR") -> str:
++    """Format a decimal amount as a currency string."""
++    symbols = {"EUR": "\u20ac", "USD": "$", "GBP": "\u00a3"}
++    symbol = symbols.get(currency, currency)
++    return f"{symbol}{amount:.2f}"
++
++
++def format_percentage(value: Decimal) -> str:
++    """Format a decimal as a percentage string."""
++    return f"{value * 100:.1f}%"
++
++
++def truncate_string(text: str, max_length: int = 50) -> str:
++    """Truncate a string to a maximum length with ellipsis."""
++    return text if len(text) <= max_length else text[:max_length - 3] + "..."
