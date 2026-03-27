@@ -209,7 +209,7 @@ When using subagents (MEDIUM/EASY modes):
 If this session ends before all tasks are complete:
 1. Update the meta-plan with current status (which tasks done, which in progress)
 2. Note any discoveries or plan revisions in the meta-plan
-3. The human can resume with aria:resume in a new session
+3. The human can resume with aria:resume-plan in a new session
 
 ## Completion
 
@@ -235,5 +235,5 @@ After all tasks are done:
 - **aria:plan** — creates the plan this skill executes
 - **aria:design** — return to design when reality doesn't match plan
 - **aria:review** — code review after all tasks or per-task in HARD mode
-- **aria:resume** — resume execution in a new session
+- **aria:resume-plan** — resume execution in a new session
 - **aria:abort** — clean shutdown

@@ -78,7 +78,7 @@ git add -A && git commit -m "wip: shelved — [reason]"
 # Clean up worktree if exists, but keep the branch
 cd <main-worktree-path>
 git worktree remove <path>
-# Branch stays — can resume later with aria:resume
+# Branch stays — can resume later with aria:resume-plan
 ```
 
 **C) Discard:**

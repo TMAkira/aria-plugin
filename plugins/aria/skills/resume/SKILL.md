@@ -1,5 +1,5 @@
 ---
-name: resume
+name: resume-plan
 description: Use when resuming work on an existing plan from a previous session. Use when the user says to continue, resume, or pick up where we left off.
 ---
 
@@ -7,7 +7,7 @@ description: Use when resuming work on an existing plan from a previous session.
 
 Resume execution of a plan that was started in a previous session.
 
-**Announce at start:** "Using aria:resume to pick up where we left off."
+**Announce at start:** "Using aria:resume-plan to pick up where we left off."
 
 ## Process
 

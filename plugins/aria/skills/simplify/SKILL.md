@@ -164,6 +164,6 @@ Run aria:exec to begin cleanup.
 ## Integration
 
 - **aria:exec** — executes the generated plan
-- **aria:resume** — resumes multi-session simplification
+- **aria:resume-plan** — resumes multi-session simplification
 - **aria:review** — can be run after simplification for final check
 - **aria:baseline** — simplify-generated plans modify existing code, so exec will trigger baseline automatically in MEDIUM mode

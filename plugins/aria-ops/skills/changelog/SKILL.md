@@ -270,6 +270,8 @@ Assign each entry to a category:
 - CSS tweaks users never noticed (z-index, hover states, overflow)
 - Data sync/consistency fixes between internal models
 - Anything where you'd need to explain the technical context for the user to understand
+- **Admin/SuperAdmin-only changes** — role simulation, admin warmup, internal administration tools. End users don't know these features exist and shouldn't learn about them through the changelog
+- **Fixes that only affect an internal role** (e.g., 500 error on a SuperAdmin-only endpoint) — if the end user could never encounter the bug, it doesn't belong in the client changelog
 
 ---
 

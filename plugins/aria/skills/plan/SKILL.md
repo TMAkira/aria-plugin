@@ -207,4 +207,4 @@ Wait for the human to review and approve before invoking aria:exec.
 
 - **aria:design** — produces the design this skill consumes
 - **aria:exec** — executes the plan this skill produces
-- **aria:resume** — reads the meta-plan to resume interrupted work
+- **aria:resume-plan** — reads the meta-plan to resume interrupted work

@@ -26,7 +26,7 @@ A human-in-the-loop development workflow. Aria enforces a structured process: **
 | `aria:baseline` | Capture test state before modifying code for regression comparison |
 | `aria:review` | Code review of changes (per-task or full) |
 | `aria:worktree` | Git worktree isolation for feature work |
-| `aria:resume` | Resume interrupted work from a previous session |
+| `aria:resume-plan` | Resume interrupted work from a previous session |
 | `aria:abort` | Clean shutdown with options to keep, shelve, or discard work |
 
 #### Post-Implementation
@@ -48,7 +48,7 @@ A human-in-the-loop development workflow. Aria enforces a structured process: **
 ```
 aria:design -> aria:plan -> aria:worktree -> aria:exec -> aria:review
                                                ^            |
-                                               +-- aria:resume (if interrupted)
+                                               +-- aria:resume-plan (if interrupted)
 ```
 
 **Post-Implementation Cleanup:**
