@@ -120,6 +120,7 @@ Write failing test → Run (RED) → Implement → Run (GREEN) → Refactor → 
 - If the task is harder than expected: STOP, surface to human
 - If you discover something that impacts future tasks: note it for the debriefing
 - If `.aria/project.md` exists, follow its documented conventions. **Never create `.aria/`.**
+- **OpenSpec mode**: if working from an OpenSpec change, after completing the task update the corresponding checkbox in `openspec/changes/<name>/tasks.md` (`- [ ]` → `- [x]`). This is the same task-tracking the openspec-apply-change skill performs — keep it in sync so `openspec status` reflects reality.
 
 **After implementation, commit immediately:**
 ```bash
@@ -220,6 +221,7 @@ After all tasks are done:
 3. Offer: aria:review for a full code review of all changes
 4. Offer: merge strategy (squash, merge commit, rebase)
 5. If `.aria/` exists: offer aria:learn to capture session learnings
+6. **If working from an OpenSpec change** (`openspec/changes/<name>/` exists for the current feature): offer to invoke **openspec-archive-change** to finalize the change. This validates artifact/task completion, syncs delta specs into main specs, and moves the change to `openspec/changes/archive/YYYY-MM-DD-<name>/`.
 
 ## Red Flags — STOP Immediately
 
@@ -237,3 +239,5 @@ After all tasks are done:
 - **aria:review** — code review after all tasks or per-task in HARD mode
 - **aria:resume-plan** — resume execution in a new session
 - **aria:abort** — clean shutdown
+- **openspec-apply-change** (OpenSpec mode) — task-tracking semantics aligned with this skill (checkbox updates in `tasks.md`); aria:exec handles execution, openspec-apply-change is available if the user wants to fall back to a pure-OpenSpec apply loop without aria's TDD/baseline/checkpoint discipline
+- **openspec-archive-change** (OpenSpec mode) — offered after all tasks complete to finalize the OpenSpec change

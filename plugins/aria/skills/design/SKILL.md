@@ -71,6 +71,7 @@ Before asking questions, understand the current state:
 - Understand the existing architecture in the affected area
 - **Read `docs/patterns/`** if it exists — these are the project's recurring patterns and conventions. Any design must be consistent with documented patterns. If no patterns doc exists yet, note it and explore the codebase to identify conventions manually.
 - If `.aria/project.md` exists, read it for project context (structure, conventions, known complexity). If `.aria/learnings.md` exists, scan for learnings relevant to this design. **Never create `.aria/`** — skip silently if absent.
+- **OpenSpec detection**: if an `openspec/` directory exists at the project root, this project uses the OpenSpec workflow for change management. Run `openspec list --json` to see active changes. If a change relevant to this design already exists, read its artifacts (`openspec/changes/<name>/proposal.md`, `design.md`, `tasks.md`) for context. The `openspec-explore` skill is available as a thinking partner during the DF/DT discussions if depth is needed.
 
 ### Step 2: DF — Functional Discussion
 
@@ -151,13 +152,32 @@ Get explicit approval before proceeding.
 
 ### Step 5.1: Write Spec Document
 
-After the human approves the design summary, persist it:
+After the human approves the design summary, persist it.
 
-- Save to `docs/specs/YYYY-MM-DD-<topic>.md`
-- (User preferences for spec location override this default)
-- Commit: `docs: design spec for <topic>`
+**OpenSpec is aria's default backend for design artifacts.** It provides traceability (proposal/design/tasks artifacts, archived per change), spec sync (delta specs merged into main specs on archive), and a CLI (`openspec status`, `openspec list`, etc.) that aria:plan and aria:exec rely on.
 
-The spec doc drives the implementation plan — aria:plan reads it as input. Keep it concise: the design summary content is sufficient, don't pad it.
+**Decision tree:**
+
+1. **`openspec/` directory exists** → use OpenSpec. Skip to step (3).
+
+2. **`openspec/` directory does not exist** → decide whether to bootstrap.
+   - **For non-trivial changes** (Refacto complet / Refacto / multi-task Ajout / Suppression): bootstrap OpenSpec. Run:
+     ```bash
+     openspec init . --tools claude
+     ```
+     Then proceed to step (3). Commit the init separately: `chore: initialize openspec workflow`.
+   - **For trivial changes** (1-2 task Ajout, simple bugfix, doc tweak): skip OpenSpec. Save to `docs/specs/YYYY-MM-DD-<topic>.md` and commit `docs: design spec for <topic>`. Done.
+   - **If unsure**: ask the human via AskUserQuestion: "Bootstrap OpenSpec for this change? (recommended for non-trivial work — gives traceable artifacts and spec sync)".
+
+3. **OpenSpec mode** (either was present, or just bootstrapped):
+   - Delegate to the **`openspec-propose`** skill, passing the design summary as input. It will scaffold `openspec/changes/<change-name>/` with `proposal.md`, `design.md`, and `tasks.md` (or whatever artifacts the active schema requires).
+   - The aria design summary content (Need / Approach / Impact level / Key decisions / Risks / Testing strategy) maps onto the OpenSpec proposal + design artifacts — the openspec-propose skill handles the formatting per the schema.
+   - Record the OpenSpec change name in the conversation; aria:plan and aria:exec will reuse it.
+   - Commit: `docs: openspec proposal for <change-name>` (or whatever the schema's convention is — check existing commits in `openspec/changes/`).
+
+User preferences for spec location override these defaults.
+
+The spec doc (or OpenSpec proposal) drives the implementation plan — aria:plan reads it as input. Keep it concise: the design summary content is sufficient, don't pad it.
 
 ### Step 6: Transition to Planning
 
@@ -180,3 +200,5 @@ Invoke aria:plan. Do NOT start implementation directly.
 
 - **aria:plan** — the ONLY next step after design is validated
 - **aria:exec** — can return to design mid-execution when reality doesn't match the plan
+- **openspec-explore** (OpenSpec mode) — optional thinking partner during DF/DT for deep exploration; auto-detected when `openspec/` exists
+- **openspec-propose** (OpenSpec mode) — invoked at Step 5.1 to write OpenSpec artifacts instead of `docs/specs/`; auto-detected when `openspec/` exists

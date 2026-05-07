@@ -11,6 +11,24 @@ Create a detailed implementation plan structured as a meta-plan + individual tas
 
 ## Output Structure
 
+**If the project uses OpenSpec** (an `openspec/` directory exists at the project root) AND aria:design produced an OpenSpec change:
+
+```
+openspec/changes/<change-name>/
+  proposal.md                # Already created by openspec-propose
+  design.md                  # Already created by openspec-propose
+  tasks.md                   # Already created by openspec-propose — aria:plan refines/expands it
+  aria-meta.md               # Aria-specific: impact level, exec mode, baseline notes, task ordering rationale
+```
+
+aria:plan **does not duplicate** what openspec-propose produced. Instead:
+- Read the OpenSpec `tasks.md` — these are the tasks to refine into aria's structured format
+- Augment them with aria's rigor: vertical slice ordering, single testable objective per task, dependencies, verification criteria
+- Update the OpenSpec `tasks.md` in place if reordering or splitting is needed (preserves the OpenSpec checkbox format `- [ ]` for the apply step)
+- Write `aria-meta.md` next to it with the impact level, exec mode (HARD/MEDIUM/EASY), baseline strategy, and any aria-specific notes
+
+**Otherwise** (no OpenSpec):
+
 ```
 docs/plans/<feature-name>/
   plan.md                    # Meta-plan: goal, architecture, task order, status, dependencies
@@ -20,7 +38,7 @@ docs/plans/<feature-name>/
   ...
 ```
 
-User preferences for plan location override this default.
+User preferences for plan location override these defaults.
 
 ## The Process
 
@@ -208,3 +226,4 @@ Wait for the human to review and approve before invoking aria:exec.
 - **aria:design** — produces the design this skill consumes
 - **aria:exec** — executes the plan this skill produces
 - **aria:resume-plan** — reads the meta-plan to resume interrupted work
+- **openspec-propose** (OpenSpec mode) — produces the initial `tasks.md` that aria:plan refines; auto-detected when `openspec/` exists

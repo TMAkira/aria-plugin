@@ -55,3 +55,4 @@ For each changed file:
 
 - **aria:exec** — calls review after each task (HARD) or at completion
 - Can be invoked standalone: `/review` to review current uncommitted changes
+- **openspec-archive-change** (OpenSpec mode) — when the review is the final review for an OpenSpec change and all tasks are green, offer to invoke openspec-archive-change to finalize the change and sync delta specs into main specs
