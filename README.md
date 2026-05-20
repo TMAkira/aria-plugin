@@ -14,9 +14,7 @@ plugins/
 
 A human-in-the-loop development workflow. Aria enforces a structured process: **design first, then plan, then execute stepwise with checkpoints**.
 
-### Skills
-
-#### Core Workflow
+### Core Skills
 
 | Skill | Purpose |
 |-------|---------|
@@ -29,13 +27,13 @@ A human-in-the-loop development workflow. Aria enforces a structured process: **
 | `aria:resume-plan` | Resume interrupted work from a previous session |
 | `aria:abort` | Clean shutdown with options to keep, shelve, or discard work |
 
-#### Post-Implementation
+### Post-Implementation
 
 | Skill | Purpose |
 |-------|---------|
 | `aria:simplify` | Scan for dead code, duplication, test gaps, and complexity — generate a cleanup plan |
 
-#### Project Knowledge (Experimental)
+### Project Knowledge (Experimental)
 
 | Skill | Purpose |
 |-------|---------|
@@ -70,6 +68,55 @@ Aria skills automatically load `.aria/` context when it exists. If you never run
 - **Human checkpoints** — never proceed to the next task without approval
 - **Tests are written WITH the task, never after** — TDD is enforced
 - **Evidence before claims** — run tests, show output, then report
+
+---
+
+## OpenSpec Integration (v1.2+)
+
+Aria can use [OpenSpec](https://github.com/Fission-AI/OpenSpec) as the canonical backend for design artifacts (proposal / design / tasks per change), with delta-spec syncing on archive. **Detection is automatic** — if an `openspec/` directory exists at the project root, aria switches to OpenSpec mode. Nothing changes for projects without OpenSpec.
+
+### How aria core skills integrate
+
+| Aria skill | OpenSpec-mode behavior |
+|------------|------------------------|
+| `aria:design` | Detects `openspec/`. For non-trivial changes (Refacto / Suppression / multi-task Ajout), bootstraps via `openspec init . --tools claude` if missing, then delegates artifact writing to `openspec-propose`. For trivial changes, keeps the legacy `docs/specs/` flow. |
+| `aria:plan` | Reads `openspec/changes/<name>/tasks.md` instead of starting from scratch. Augments with aria's vertical-slice ordering and writes a complementary `aria-meta.md` (impact level, exec mode, baseline notes). |
+| `aria:exec` | Syncs OpenSpec checkboxes (`- [ ]` → `- [x]`) in `openspec/changes/<name>/tasks.md` as each task completes, so `openspec status` reflects reality. Offers `openspec-archive-change` at the end. |
+| `aria:review` | When the final review is green, offers `openspec-archive-change` to finalize the change and sync delta specs into main specs. |
+
+**Design philosophy:** *aria is still the unique entry point.* The four openspec-* skills below run behind the scenes when invoked by aria. You don't need to know they exist for normal use.
+
+### Helper skills (used internally by aria)
+
+| Skill | Purpose |
+|-------|---------|
+| `aria:openspec-explore` | Thinking-partner mode — optional deep exploration during `aria:design` DF/DT |
+| `aria:openspec-propose` | Scaffolds a change (`proposal.md` + `design.md` + `tasks.md`) — invoked by `aria:design` step 5.1 |
+| `aria:openspec-apply-change` | Pure-OpenSpec task implementation loop — fallback if you don't want aria's TDD/baseline/checkpoint discipline |
+| `aria:openspec-archive-change` | Finalizes a change, syncs delta specs into main specs, moves to `openspec/changes/archive/` — offered by `aria:exec` / `aria:review` on completion |
+
+### Slash commands for direct OpenSpec use
+
+Sometimes you want OpenSpec without aria's discipline (e.g., quick spec capture, exploration without a full design pass). These slash commands invoke the helpers directly:
+
+| Command | What it does |
+|---------|-------------|
+| `/opsx:explore [topic\|change-name]` | Enter explore mode — think through ideas, investigate problems, draw diagrams. Never writes app code. |
+| `/opsx:propose [name\|description]` | Create a change and generate all artifacts (proposal/design/tasks) in one step |
+| `/opsx:apply [change-name]` | Implement the tasks from an OpenSpec change, ticking checkboxes as you go |
+| `/opsx:archive [change-name]` | Finalize a completed change, sync delta specs, archive it |
+
+**Requirements:** the `openspec` CLI must be installed and `openspec/` initialized at the project root (run `openspec init . --tools claude` once, or let `aria:design` do it for you).
+
+### When to use which entry point
+
+```
+You have an idea, no specs yet            -> aria:design  (recommended — full HITL flow)
+You want to think out loud, no commitment -> /opsx:explore
+You know exactly what you want, fast      -> /opsx:propose
+You're implementing inside an aria plan   -> aria:exec    (handles checkbox sync)
+You want a pure OpenSpec apply loop       -> /opsx:apply
+```
 
 ### Installation
 
