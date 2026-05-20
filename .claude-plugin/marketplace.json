@@ -13,9 +13,15 @@
     },
     {
       "name": "aria-ops",
-      "description": "Release operations toolkit: commit+push, changelog generation, QA test plans, PR merge+cleanup, and full release workflow with version bump and tagging",
+      "description": "Release operations toolkit: commit+push, changelog generation, PR merge+cleanup, and full release workflow with version bump and tagging",
       "source": "./plugins/aria-ops",
       "category": "operations"
+    },
+    {
+      "name": "aria-testing",
+      "description": "Test validation toolkit: manual QA checklists from release diffs (testplan), and autonomous E2E execution from feature-branch diffs via a browser MCP (e2e)",
+      "source": "./plugins/aria-testing",
+      "category": "testing"
     }
   ]
 }

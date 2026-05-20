@@ -1,0 +1,19 @@
+[
+  {"query": "run an e2e plan on this branch before I open a PR", "should_trigger": true},
+  {"query": "generate an end-to-end test plan from the diff and execute it autonomously", "should_trigger": true},
+  {"query": "e2e plan for this branch", "should_trigger": true},
+  {"query": "drive a real browser through the new checkout flow and screenshot every step", "should_trigger": true},
+  {"query": "j'ai fini la feature, valide-la en bout en bout avec playwright avant la review", "should_trigger": true},
+  {"query": "lance le e2e sur la branche courante", "should_trigger": true},
+  {"query": "génère et exécute le plan e2e de cette feature", "should_trigger": true},
+  {"query": "rapport e2e après le run de tout à l'heure", "should_trigger": true},
+  {"query": "re-run T-04 after my fix", "should_trigger": true},
+  {"query": "give me a pass/fail report for the e2e plan we just ran", "should_trigger": true},
+  {"query": "write a playwright test file for the login page", "should_trigger": false},
+  {"query": "run the jest test suite and tell me what fails", "should_trigger": false},
+  {"query": "give me a manual QA checklist for the release", "should_trigger": false},
+  {"query": "audit the unit test coverage on the orders module", "should_trigger": false},
+  {"query": "open the app in chrome and tell me how it looks", "should_trigger": false},
+  {"query": "verify my fix works in the running app", "should_trigger": false},
+  {"query": "start the dev server and screenshot the homepage", "should_trigger": false}
+]

@@ -3,17 +3,17 @@ name: testplan
 description: Generate manual QA checklists from actual code changes (git diff). Use this skill whenever the user asks about manual testing, QA checklists, "what should I test", "what needs testing", test plans for a release, pre-release verification, or preparing for QA. Also use when the user says "testplan", "generate test plan", "what to test before deploying", "mark as tested", or wants a structured checklist of manual verification steps organized by domain/feature area. Do NOT use for running automated tests, writing unit/integration/E2E test code, or auditing test coverage.
 ---
 
-# aria-ops:testplan — Generate manual QA checklist from code changes
+# aria-testing:testplan — Generate manual QA checklist from code changes
 
 Generate a specific, actionable manual test checklist based on **actual code changes** since the last tested release. Tests are grouped by page/domain, labeled by type, and optionally include DB integrity checks.
 
-**Announce at start:** "Using aria-ops:testplan to generate a QA checklist."
+**Announce at start:** "Using aria-testing:testplan to generate a QA checklist."
 
 **Usage:**
-- `aria-ops:testplan` — checklist from last tested tag to main branch
-- `aria-ops:testplan v1.13.0` — force a specific starting tag
-- `aria-ops:testplan users` — filter tests to a specific domain
-- `aria-ops:testplan mark` — mark the most recent tag as tested
+- `aria-testing:testplan` — checklist from last tested tag to main branch
+- `aria-testing:testplan v1.13.0` — force a specific starting tag
+- `aria-testing:testplan users` — filter tests to a specific domain
+- `aria-testing:testplan mark` — mark the most recent tag as tested
 
 ## Test Type Labels
 
@@ -34,7 +34,7 @@ Follow these steps in order. Do NOT skip steps.
 
 ### Step 0: Load or Setup config
 
-Look for `.aria-ops/testplan.json` at the project root.
+Look for `.aria-testing/testplan.json` at the project root.
 
 **If the file exists**, load it. The schema is:
 
@@ -78,7 +78,7 @@ All top-level keys are optional. Defaults:
 
 **If the file does NOT exist**, run interactive setup. Ask questions **one at a time**:
 
-1. **Pre-fill**: scan for other `.aria-ops/*.json` files. If any exist, extract `ado`, `branches`, and `test` values to use as defaults.
+1. **Pre-fill**: scan for other `.aria-testing/*.json` files. If any exist, extract `ado`, `branches`, and `test` values to use as defaults.
 
 2. **Questions:**
    - "Azure DevOps project name? (leave empty to skip ADO integration)"
@@ -98,7 +98,7 @@ All top-level keys are optional. Defaults:
    - "Enable DB integrity checks? (y/n)"
      - If yes: "DB command prefix?" (e.g., `docker exec pg psql -U postgres -d mydb -c`)
 
-3. Write the config to `.aria-ops/testplan.json`.
+3. Write the config to `.aria-testing/testplan.json`.
 4. Continue with the rest of the workflow.
 
 Store resolved config values in variables for use throughout:
