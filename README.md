@@ -14,31 +14,37 @@ plugins/
 
 A human-in-the-loop development workflow. Aria enforces a structured process: **design first, then plan, then execute stepwise with checkpoints**.
 
+Every aria capability is exposed two ways:
+- as a **skill** (auto-triggered by Claude when the context matches — e.g. you say "let's plan this", Claude picks `aria:plan`)
+- as a **slash command** `/aria:<name>` (explicit invocation, autocompletes from `/aria:`)
+
+Use whichever fits — the slash form removes ambiguity when several skills could match.
+
 ### Core Skills
 
-| Skill | Purpose |
-|-------|---------|
-| `aria:design` | Functional & technical discussion before any implementation |
-| `aria:plan` | Break validated designs into task files with TDD steps |
-| `aria:exec` | Execute tasks one-by-one with human checkpoints between each |
-| `aria:baseline` | Capture test state before modifying code for regression comparison |
-| `aria:review` | Code review of changes (per-task or full) |
-| `aria:worktree` | Git worktree isolation for feature work |
-| `aria:resume-plan` | Resume interrupted work from a previous session |
-| `aria:abort` | Clean shutdown with options to keep, shelve, or discard work |
+| Skill | Slash command | Purpose |
+|-------|---------------|---------|
+| `aria:design` | `/aria:design` | Functional & technical discussion before any implementation |
+| `aria:plan` | `/aria:plan` | Break validated designs into task files with TDD steps |
+| `aria:exec` | `/aria:exec` | Execute tasks one-by-one with human checkpoints between each |
+| `aria:baseline` | `/aria:baseline` | Capture test state before modifying code for regression comparison |
+| `aria:review` | `/aria:review` | Code review of changes (per-task or full) |
+| `aria:worktree` | `/aria:worktree` | Git worktree isolation for feature work |
+| `aria:resume-plan` | `/aria:resume` | Resume interrupted work from a previous session |
+| `aria:abort` | `/aria:abort` | Clean shutdown with options to keep, shelve, or discard work |
 
 ### Post-Implementation
 
-| Skill | Purpose |
-|-------|---------|
-| `aria:simplify` | Scan for dead code, duplication, test gaps, and complexity — generate a cleanup plan |
+| Skill | Slash command | Purpose |
+|-------|---------------|---------|
+| `aria:simplify` | `/aria:simplify` | Scan for dead code, duplication, test gaps, and complexity — generate a cleanup plan |
 
 ### Project Knowledge (Experimental)
 
-| Skill | Purpose |
-|-------|---------|
-| `aria:setup` | Initialize project knowledge in `.aria/` — interactive project scan |
-| `aria:learn` | Capture session learnings to `.aria/learnings.md` |
+| Skill | Slash command | Purpose |
+|-------|---------------|---------|
+| `aria:setup` | `/aria:setup` | Initialize project knowledge in `.aria/` — interactive project scan |
+| `aria:learn` | `/aria:learn` | Capture session learnings to `.aria/learnings.md` |
 
 ### Workflows
 
@@ -88,23 +94,25 @@ Aria can use [OpenSpec](https://github.com/Fission-AI/OpenSpec) as the canonical
 
 ### Helper skills (used internally by aria)
 
-| Skill | Purpose |
-|-------|---------|
-| `aria:openspec-explore` | Thinking-partner mode — optional deep exploration during `aria:design` DF/DT |
-| `aria:openspec-propose` | Scaffolds a change (`proposal.md` + `design.md` + `tasks.md`) — invoked by `aria:design` step 5.1 |
-| `aria:openspec-apply-change` | Pure-OpenSpec task implementation loop — fallback if you don't want aria's TDD/baseline/checkpoint discipline |
-| `aria:openspec-archive-change` | Finalizes a change, syncs delta specs into main specs, moves to `openspec/changes/archive/` — offered by `aria:exec` / `aria:review` on completion |
+| Skill | Slash command | Purpose |
+|-------|---------------|---------|
+| `aria:openspec-explore` | `/aria:openspec-explore` | Thinking-partner mode — optional deep exploration during `aria:design` DF/DT |
+| `aria:openspec-propose` | `/aria:openspec-propose` | Scaffolds a change (`proposal.md` + `design.md` + `tasks.md`) — invoked by `aria:design` step 5.1 |
+| `aria:openspec-apply-change` | `/aria:openspec-apply` | Pure-OpenSpec task implementation loop — fallback if you don't want aria's TDD/baseline/checkpoint discipline |
+| `aria:openspec-archive-change` | `/aria:openspec-archive` | Finalizes a change, syncs delta specs into main specs, moves to `openspec/changes/archive/` — offered by `aria:exec` / `aria:review` on completion |
 
 ### Slash commands for direct OpenSpec use
 
-Sometimes you want OpenSpec without aria's discipline (e.g., quick spec capture, exploration without a full design pass). These slash commands invoke the helpers directly:
+Sometimes you want OpenSpec without aria's discipline (e.g., quick spec capture, exploration without a full design pass). These low-level commands invoke the helpers directly without going through any aria skill:
 
 | Command | What it does |
 |---------|-------------|
-| `/opsx:explore [topic\|change-name]` | Enter explore mode — think through ideas, investigate problems, draw diagrams. Never writes app code. |
-| `/opsx:propose [name\|description]` | Create a change and generate all artifacts (proposal/design/tasks) in one step |
-| `/opsx:apply [change-name]` | Implement the tasks from an OpenSpec change, ticking checkboxes as you go |
-| `/opsx:archive [change-name]` | Finalize a completed change, sync delta specs, archive it |
+| `/aria:opsx:explore [topic\|change-name]` | Enter explore mode — think through ideas, investigate problems, draw diagrams. Never writes app code. |
+| `/aria:opsx:propose [name\|description]` | Create a change and generate all artifacts (proposal/design/tasks) in one step |
+| `/aria:opsx:apply [change-name]` | Implement the tasks from an OpenSpec change, ticking checkboxes as you go |
+| `/aria:opsx:archive [change-name]` | Finalize a completed change, sync delta specs, archive it |
+
+> **`/aria:opsx:*` vs `/aria:openspec-*`** — the `opsx` commands are raw OpenSpec orchestration (no aria-specific discipline). The `openspec-*` commands invoke the corresponding aria skill, which adds aria's conventions on top (vertical-slice ordering, checkbox sync, archive offer, etc.). Use `opsx` for quick OpenSpec-only ops, `openspec-*` when you want aria's flow.
 
 **Requirements:** the `openspec` CLI must be installed and `openspec/` initialized at the project root (run `openspec init . --tools claude` once, or let `aria:design` do it for you).
 
