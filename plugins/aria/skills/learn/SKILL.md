@@ -5,18 +5,32 @@ description: "(Experimental) Use when the user wants to capture learnings from a
 
 # Learn — Capture Session Learnings (Experimental)
 
-Extract non-obvious insights from a work session and append them to `.aria/learnings.md`.
+Extract non-obvious insights from a work session and append them to the project's
+`learnings.md`.
 
 **Announce at start:** "Using aria:learn to capture learnings from this session. (This feature is experimental.)"
 
 ## Pre-flight
 
+Resolve where this project's knowledge lives — see
+[KNOWLEDGE-LOCATION.md](../setup/KNOWLEDGE-LOCATION.md). Repo mode first, personal mode
+second:
+
 ```bash
+# repo mode
 ls .aria/learnings.md 2>/dev/null
+
+# personal mode, keyed on the repository rather than the worktree
+slug=$(basename "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)")")
+ls "$HOME/.claude/aria/projects/$slug/learnings.md" 2>/dev/null
 ```
 
-- **If not found:** "No `.aria/` found. Run `aria:setup` first to initialize project knowledge." — STOP.
-- **Never create `.aria/`** — only aria:setup does that.
+- **If one is found:** use it. That path is `<learnings>` for the rest of this skill.
+- **If neither is found:** "No aria knowledge for this project yet. Run `aria:setup` — it can
+  store knowledge **in the repo** (`.aria/`, committed and shared) or **personally**
+  (`~/.claude/aria/projects/<slug>/`, never committed, for a repository you should not push
+  private notes into)." — STOP.
+- **Never create either directory** — only aria:setup does that.
 
 ## Process
 
@@ -83,18 +97,30 @@ Append these to .aria/learnings.md?
 
 Wait for approval. The user can edit, remove, or add entries.
 
-### Step 5: Append and Commit
+### Step 5: Append, and Commit Only in Repo Mode
 
-Append to `.aria/learnings.md` — **never overwrite** existing content.
+Append to `<learnings>` — **never overwrite** existing content.
+
+**Repo mode** — the file is inside the repository, so commit it:
 
 ```bash
 git add .aria/learnings.md
 git commit -m "docs: capture learnings from <brief context>"
 ```
 
+**Personal mode** — the file is outside the repository. Run no git command at all: a `git add`
+would either fail or, worse, succeed against whatever repository happens to be the working
+directory. Report the path instead:
+
+```
+Appended 2 learnings to ~/.claude/aria/projects/<slug>/learnings.md
+```
+
 ## Key Rules
 
-- **Never create `.aria/`** — if it doesn't exist, point to aria:setup and stop
+- **Never create the knowledge directory** — if neither exists, point to aria:setup, naming
+  both modes, and stop. A repository you cannot commit to is a reason to use personal mode,
+  not a reason to capture nothing.
 - **Append only** — never overwrite, edit, or delete existing entries
 - **Concise entries** — 2-4 lines per learning, not paragraphs
 - **Non-obvious only** — if it's in the code or CLAUDE.md, it's not a learning
@@ -103,5 +129,7 @@ git commit -m "docs: capture learnings from <brief context>"
 
 ## Integration
 
-- **aria:setup** — creates `.aria/learnings.md` that this skill appends to
-- **aria:exec** — proposes learn at plan completion (when `.aria/` exists)
+- **aria:setup** — creates the `learnings.md` this skill appends to, in either mode
+- **aria:exec** — proposes learn at plan completion (when knowledge exists in either mode)
+- **[KNOWLEDGE-LOCATION.md](../setup/KNOWLEDGE-LOCATION.md)** — the resolution rule shared by
+  every skill that touches project knowledge

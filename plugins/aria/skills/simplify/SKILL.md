@@ -156,8 +156,8 @@ Run aria:exec to begin cleanup.
 - **Read-only scan** — never modify code during steps 1-4. The scan phase is pure analysis.
 - **Human curates** — always present findings and wait for approval before generating the plan.
 - **No false positives over missed findings** — if unsure whether something is dead code or duplication, err on the side of including it with a note. The human will remove false positives.
-- **Never create `.aria/`** — this skill has nothing to do with the knowledge system.
-- If `.aria/project.md` exists, read it for project context (conventions, patterns to follow during the scan). **Never create it.**
+- **Never create the knowledge directory** — this skill has nothing to do with the knowledge system.
+- If a `project.md` exists, read it for project context (conventions, patterns to follow during the scan). Project knowledge lives either in `.aria/` or, in personal mode, in `~/.claude/aria/projects/<slug>/` where the slug comes from `--git-common-dir` so every worktree of a repository shares one location — see [KNOWLEDGE-LOCATION.md](../setup/KNOWLEDGE-LOCATION.md). **Never create it.**
 - **If no findings:** "Code looks clean. No simplification plan needed."
 - **Base branch detection:** try `develop` first, then `main`, then `master`. If none found, ask the user.
 

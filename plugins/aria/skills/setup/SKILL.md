@@ -5,25 +5,56 @@ description: "(Experimental) Use when the user wants to initialize aria project 
 
 # Setup — Project Knowledge Initialization (Experimental)
 
-Scan the project and create `.aria/` with structured project knowledge for other aria skills to consume.
+Scan the project and create structured project knowledge for other aria skills to consume,
+either in the repository or in a personal directory outside it.
 
 **Announce at start:** "Using aria:setup to initialize project knowledge. (This feature is experimental.)"
 
-## This is the ONLY skill that creates `.aria/`
+## This is the ONLY skill that creates the knowledge directory
 
-No other aria skill is allowed to create the `.aria/` directory or its files. If `.aria/` doesn't exist and another skill is running, it must skip silently — never create it.
+No other aria skill may create `.aria/` or `~/.claude/aria/projects/<slug>/`. If neither
+exists and another skill is running, it must skip silently — never create one.
+
+See [KNOWLEDGE-LOCATION.md](KNOWLEDGE-LOCATION.md) for the two modes and the resolution rule
+every skill shares.
 
 ## Process
 
 ### Step 1: Pre-flight Check
 
 ```bash
+# repo mode
 ls -la .aria/ 2>/dev/null
+
+# personal mode, keyed on the repository rather than the worktree
+slug=$(basename "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)")")
+ls -la "$HOME/.claude/aria/projects/$slug/" 2>/dev/null
 ```
 
-- **If `.aria/` exists:** "`.aria/` already exists. Re-run setup to regenerate `project.md`? (`learnings.md` will be preserved.)"
-  - Wait for confirmation before proceeding
-- **If `.aria/` does not exist:** proceed
+- **If one exists:** "Knowledge already exists at `<path>`. Re-run setup to regenerate
+  `project.md`? (`learnings.md` will be preserved.)"
+  - Wait for confirmation before proceeding. Keep the existing mode; do not silently move
+    knowledge from one location to the other.
+- **If neither exists:** proceed to Step 1b.
+
+### Step 1b: Choose the Mode
+
+Ask, once, and never assume:
+
+> Where should this project's knowledge live?
+>
+> - **In the repo** (`.aria/`) — committed and shared with everyone working on it.
+> - **Personal** (`~/.claude/aria/projects/<slug>/`) — never committed.
+
+Default to **repo** for a repository the user owns, and say so. Recommend **personal** when
+committing working notes would be inappropriate — a client's repository, an employer's, a
+shared open-source one. Do not decide alone; the same repository can be either depending on
+what the user is allowed to push.
+
+Show the resolved path before writing anything, so a slug collision between two repositories
+of the same directory name is visible now rather than later.
+
+The chosen path is `<knowledge>` for the rest of this skill.
 
 ### Step 2: Automated Scan
 
@@ -58,7 +89,7 @@ Ask **one at a time**, skip if the answer is already obvious from the scan:
 3. "Any conventions or patterns not captured in CLAUDE.md or docs?" *(skip if no CLAUDE.md — everything is new)*
 4. "Anything else aria should know about this project?" *(open-ended, always ask)*
 
-### Step 4: Generate `.aria/project.md`
+### Step 4: Generate `<knowledge>/project.md`
 
 ```markdown
 # Project Knowledge — <project name>
@@ -90,7 +121,7 @@ Ask **one at a time**, skip if the answer is already obvious from the scan:
 
 **Keep it concise.** This file is loaded into context by other skills, so every line costs tokens. Reference CLAUDE.md instead of duplicating. Target: under 50 lines.
 
-### Step 5: Create `.aria/learnings.md`
+### Step 5: Create `<knowledge>/learnings.md`
 
 Only if it doesn't already exist (preserve on re-run):
 
@@ -105,7 +136,7 @@ Only if it doesn't already exist (preserve on re-run):
 Display the generated `project.md` content to the user:
 
 ```
-## .aria/ initialized
+## Knowledge initialized at <knowledge>
 
 **project.md** (N lines):
 [content]
@@ -117,18 +148,26 @@ Does this look right? Edit anything before I save?
 
 Wait for the user to approve or request changes. Save only after confirmation.
 
-### Step 7: Commit
+### Step 7: Commit — Repo Mode Only
+
+**Repo mode:**
 
 ```bash
 git add .aria/
 git commit -m "chore: initialize aria project knowledge"
 ```
 
+**Personal mode:** run no git command. The directory is outside the repository, so a `git add`
+would either fail or succeed against the wrong repository. Report the path instead, and say
+plainly that nothing was committed and nothing will be.
+
 ## Re-run Behavior
 
-When `.aria/` already exists:
+When knowledge already exists, in either mode:
 - **Regenerate** `project.md` from scratch (re-scan + re-ask)
 - **Preserve** `learnings.md` — never overwrite or delete it
+- **Keep the mode** — re-running setup is not how knowledge moves between repo and personal.
+  Moving it is a deliberate act: the user moves the files, then re-runs setup.
 - Show diff between old and new `project.md` before saving
 
 ## Key Rules
@@ -136,9 +175,11 @@ When `.aria/` already exists:
 - **Concise output** — `project.md` should be under 50 lines. It's loaded every session.
 - **Don't duplicate CLAUDE.md** — reference it. The value of `.aria/` is what CLAUDE.md doesn't cover.
 - **Always ask about complexity** — that's the one thing no scan can detect.
-- **Commit the result** — `.aria/` is meant to be shared via git.
+- **Commit the result in repo mode** — `.aria/` is meant to be shared via git. In personal
+  mode, commit nothing: the point of that mode is that these notes never reach the repository.
 
 ## Integration
 
-- **aria:learn** — writes to `.aria/learnings.md` created here
+- **aria:learn** — appends to the `learnings.md` created here, in whichever mode
+- **[KNOWLEDGE-LOCATION.md](KNOWLEDGE-LOCATION.md)** — the two modes and the resolution rule
 - **aria:design, aria:plan, aria:exec** — conditionally read `.aria/` at start (after Task 4 patches them)

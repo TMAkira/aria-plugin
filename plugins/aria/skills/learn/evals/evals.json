@@ -10,20 +10,22 @@
         "Agent reads recent git log to understand what happened in the session",
         "Agent proposes learnings one at a time, not all at once",
         "Agent waits for user approval on each proposed learning",
-        "Agent appends entries to learnings.md — does NOT overwrite existing content",
+        "Agent appends entries to learnings.md \u2014 does NOT overwrite existing content",
         "Agent commits the updated learnings.md to git"
       ]
     },
     {
       "id": 2,
       "prompt": "Capture learnings from this session.",
-      "expected_output": "Agent detects that .aria/ directory does not exist, tells the user to run aria:setup first, and STOPS without creating .aria/ or learnings.md.",
+      "expected_output": "Agent checks both knowledge locations -- .aria/ and the personal ~/.claude/aria/projects/<slug>/ -- finds neither, tells the user to run aria:setup naming both modes, and STOPS without creating anything.",
       "files": [],
       "expectations": [
         "Agent checks for .aria/learnings.md and detects it is missing",
-        "Agent tells the user to run aria:setup first",
-        "Agent STOPS — does NOT proceed with capturing learnings",
-        "Agent does NOT create .aria/ directory",
+        "Agent ALSO checks the personal location ~/.claude/aria/projects/<slug>/learnings.md before concluding there is no knowledge",
+        "Agent derives the slug from --git-common-dir, not --show-toplevel, so a linked worktree resolves to the same slug as its main checkout",
+        "Agent tells the user to run aria:setup, mentioning BOTH modes -- in-repo and personal",
+        "Agent STOPS -- does NOT proceed with capturing learnings",
+        "Agent does NOT create either directory",
         "Agent does NOT create learnings.md"
       ]
     },
@@ -37,6 +39,19 @@
         "Agent does NOT propose a learning that duplicates a topic already in learnings.md",
         "Agent skips or filters out already-captured topics",
         "Agent proposes only new, non-duplicate insights"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Capture learnings from this session.",
+      "expected_output": "Knowledge exists in personal mode only. Agent appends the accepted learnings to ~/.claude/aria/projects/<slug>/learnings.md and runs no git command, because that file is outside the repository.",
+      "files": [],
+      "expectations": [
+        "Agent finds no .aria/ but does find the personal learnings.md and uses it",
+        "Agent proposes learnings one at a time and waits for approval, as in repo mode",
+        "Agent appends to the personal learnings.md -- does NOT overwrite it",
+        "Agent runs NO git add and NO git commit -- the file is outside the repository",
+        "Agent reports the absolute path it wrote to"
       ]
     }
   ]

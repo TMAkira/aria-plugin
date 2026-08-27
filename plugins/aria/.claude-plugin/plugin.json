@@ -1,10 +1,20 @@
 {
   "name": "aria",
   "description": "Human-in-the-loop development workflow: design, plan, execute stepwise with checkpoints, regression baselines, code review, and OpenSpec integration",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "author": {
     "name": "akira-sarl"
   },
   "license": "MIT",
-  "keywords": ["workflow", "hitl", "execution", "design", "planning", "tdd", "regression", "code-review", "openspec"]
+  "keywords": [
+    "workflow",
+    "hitl",
+    "execution",
+    "design",
+    "planning",
+    "tdd",
+    "regression",
+    "code-review",
+    "openspec"
+  ]
 }

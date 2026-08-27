@@ -49,7 +49,7 @@ Read the design document (from aria:design). Extract:
 - The key components to build or modify
 - The dependencies between components
 - The verification criteria
-- If `.aria/project.md` exists, read it for project structure and conventions. If `.aria/learnings.md` exists, check for learnings relevant to the planned work. **Never create `.aria/`** — skip silently if absent.
+- If a `project.md` exists, read it for project structure and conventions. If a `learnings.md` exists, check for learnings relevant to the planned work. Project knowledge lives either in `.aria/` or, in personal mode, in `~/.claude/aria/projects/<slug>/` where the slug comes from `--git-common-dir` so every worktree of a repository shares one location — see [KNOWLEDGE-LOCATION.md](../setup/KNOWLEDGE-LOCATION.md). **Never create either directory** — skip silently when there is none.
 
 ### Step 2: Identify the Vertical Slice
 

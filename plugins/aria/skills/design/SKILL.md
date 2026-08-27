@@ -70,7 +70,7 @@ Before asking questions, understand the current state:
 - Check relevant files, docs, recent commits
 - Understand the existing architecture in the affected area
 - **Read `docs/patterns/`** if it exists — these are the project's recurring patterns and conventions. Any design must be consistent with documented patterns. If no patterns doc exists yet, note it and explore the codebase to identify conventions manually.
-- If `.aria/project.md` exists, read it for project context (structure, conventions, known complexity). If `.aria/learnings.md` exists, scan for learnings relevant to this design. **Never create `.aria/`** — skip silently if absent.
+- If a `project.md` exists, read it for project context (structure, conventions, known complexity). If a `learnings.md` exists, scan for learnings relevant to this design. Project knowledge lives either in `.aria/` or, in personal mode, in `~/.claude/aria/projects/<slug>/` where the slug comes from `--git-common-dir` so every worktree of a repository shares one location — see [KNOWLEDGE-LOCATION.md](../setup/KNOWLEDGE-LOCATION.md). **Never create either directory** — skip silently when there is none.
 - **OpenSpec detection**: if an `openspec/` directory exists at the project root, this project uses the OpenSpec workflow for change management. Run `openspec list --json` to see active changes. If a change relevant to this design already exists, read its artifacts (`openspec/changes/<name>/proposal.md`, `design.md`, `tasks.md`) for context. The `openspec-explore` skill is available as a thinking partner during the DF/DT discussions if depth is needed.
 
 ### Step 2: DF — Functional Discussion

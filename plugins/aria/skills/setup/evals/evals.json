@@ -25,7 +25,7 @@
       "expectations": [
         "Agent detects that .aria/ already exists",
         "Agent asks for confirmation before regenerating",
-        "Agent preserves learnings.md — does NOT overwrite, delete, or recreate it",
+        "Agent preserves learnings.md \u2014 does NOT overwrite, delete, or recreate it",
         "Agent regenerates project.md from a fresh scan",
         "Agent shows a diff or comparison between old and new project.md before saving"
       ]
@@ -40,6 +40,21 @@
         "Agent references CLAUDE.md in project.md instead of duplicating content (e.g. 'See CLAUDE.md for build commands' or 'See CLAUDE.md for conventions')",
         "Agent does NOT duplicate build commands, conventions, or other content already in CLAUDE.md",
         "Agent produces a concise project.md focused on what CLAUDE.md does not cover"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Initialize aria knowledge for this project, but it's my employer's repo -- I can't commit personal notes into it.",
+      "expected_output": "Agent asks where knowledge should live, recommends personal mode given the constraint, writes to ~/.claude/aria/projects/<slug>/, and commits nothing.",
+      "files": [],
+      "expectations": [
+        "Agent asks which mode to use rather than defaulting to .aria/ silently",
+        "Agent recommends personal mode because the user cannot commit to this repository",
+        "Agent shows the resolved personal path before writing anything",
+        "Agent derives the slug from --git-common-dir so every worktree of the repository shares one location",
+        "Agent creates project.md and learnings.md under the personal path",
+        "Agent does NOT create .aria/ in the repository",
+        "Agent runs NO git add and NO git commit, and says so"
       ]
     }
   ]
