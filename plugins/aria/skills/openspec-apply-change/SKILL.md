@@ -79,6 +79,22 @@ Implement tasks from an OpenSpec change.
    - Error or blocker encountered → report and wait for guidance
    - User interrupts
 
+   **Delegate reading, never deciding.** Your own context is the scarce resource: when it
+   runs out, correction round-trips cost the most, exactly when they are needed most.
+
+   - **Delegate to a subagent:** taking inventory (call sites, implementations of an
+     interface, who writes a given field), reading more than two files to answer ONE
+     question, checking a long diff against the spec. The subagent returns a conclusion and
+     `file:line` references — never a dump of file contents.
+   - **Never delegate:** the design decision, the escalation, the code of the task itself,
+     and the final verification. Re-run the gates yourself — a subagent report says what it
+     *believes* it did. Never trust a subagent's success claim.
+   - **One subagent per task**, with a single testable objective. Never batch tasks.
+   - **Redirect bulky output to a file** and read its tail: builds, test runs, long diffs.
+     `cmd | tail` hides the exit code — redirect first, filter second.
+   - **In an IDE, every edit re-sends the whole file's diagnostics**, not just those of your
+     change. Group edits to one file into a single write rather than eight small ones.
+
 7. **On completion or pause, show status**
 
    Display:
